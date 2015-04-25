@@ -102,23 +102,46 @@ Report Properties
   mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r
 
 OS Version
-oslevel -s
+ oslevel -s
 
 CPU/Memory Related Commands
-lparstat lparstat -i prtconf lsconf nmon https://www.ibm.com/developerworks/community/blogs/aixpert/entry/aix_memory_usage_or_who_is_using_the_memory_and_how20?lang=en vmstat -Iwt 2 30 iostat -Dl vmstat -s
-
+ lparstat 
+ lparstat -i 
+ prtconf 
+ lsconf 
+ nmon 
+ https://www.ibm.com/developerworks/community/blogs/aixpert/entry/aix_memory_usage_or_who_is_using_the_memory_and_how20?lang=en 
+ vmstat -Iwt 2 30 
+ iostat -Dl 
+ vmstat -s
 
 List details of all volume groups with lsvg on AIX
- lsvg | lsvg -li Operating System Logs Viewing the general system error log (AIX) errpt -a | more Find out Process Listening on a port > netstat -Aan | grep <port> First part of the result is socket id. Run following command with socket id > rmsock <socket id> tcpcb 
+ lsvg 
+ lsvg -li 
+Operating System Logs Viewing the general system error log (AIX) 
+ errpt -a | more 
+Find out Process Listening on a port
+ netstat -Aan | grep <port> 
+ First part of the result is socket id. 
+ Run following command with socket id 
+  rmsock <socket id> tcpcb 
 
 Maximum number of processes per user AIX
 lsattr -El sys0
 
-
 Certificate Related Commands
-List Certificates in Key Store 
-/global/site/vendor/mqsi/jre16/bin/keytool -list -v -keystore "<keystore file>" CA Certificate File Location /global/site/vendor/mqsi/jre16/lib/security/cacerts Generate Private Key and Key Store /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/global/site/vendor/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048 Enter information prompted. What is your first and last name? [Unknown]: shi006labt04.shdc.chrysler.com What is the name of your organizational unit? [Unknown]: ITM What is the name of your organization? [Unknown]: Chrysler Group LLC What is the name of your City or Locality? [Unknown]: Auburn Hills What is the name of your State or Province? [Unknown]: MICHIGAN What is the two-letter country code for this unit? [Unknown]: US Is CN=shi006labt04.shdc.chrysler.com, OU=ITM, O=Chrysler Group LLC, L=Auburn Hills, ST=MICHIGAN, C=US correct? (type "yes" or "no") [no]: yes Generate CSR /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias <alias_name> -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts" -file cmmdev.csr Send /global/site/vendor/mqsi/jre16/lib/security/cmmdev.csr to cdroot_pki@chrysler.com for generating the certs. Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
-/global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystoremyp12file.p12 -deststoretype PKCS12 openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem Import a Certificate in Key Store /global/site/vendor/mqsi/jre16/bin/keytool -import -alias cmm_cvp_ngtp_proxy -file "/clocal/cmmmgt/user/pscmmadm/certs/VSB_NRT.crt" -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts" Delete a Certificate from Key Store /global/site/vendor/mqsi/jre16/bin/keytool -delete -alias cmm_cvp_ngtp_proxy -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts"
+ List Certificates in Key Store 
+  keytool -list -v -keystore "<keystore file>" 
+ CA Certificate File Location 
+  /root/mqsi/jre16/lib/security/cacerts 
+ Generate Private Key and Key Store 
+  keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/root/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048 
+ Generate CSR 
+  keytool -certreq -alias <alias_name> -keystore "/root/mqsi/jre16/lib/security/cacerts" -file name.csr 
+ Send name.csr to CA for generating the certs. 
+ 
+ Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
+ /root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystoremyp12file.p12 -deststoretype PKCS12 openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem Import a Certificate in Key Store /global/site/vendor/mqsi/jre16/bin/keytool -import -alias cmm_cvp_ngtp_proxy -file "/clocal/cmmmgt/user/pscmmadm/certs/VSB_NRT.crt" -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts" Delete a Certificate from Key Store /global/site/vendor/mqsi/jre16/bin/keytool -delete -alias cmm_cvp_ngtp_proxy -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts"
 
 
 Catalog DB2 Servers on Desktop
