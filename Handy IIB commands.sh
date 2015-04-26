@@ -1,52 +1,52 @@
-List deployed objects on message broker
+# List deployed objects on message broker
 	mqsilist -r
 
-Restart message broker
+# Restart message broker
 	mqsistop <broker>
 	mqsistart <broker>
 
-Deploy a BAR file
+# Deploy a BAR file
 	mqsideploy <broker> -e <execution_group> -a <bar_file> 
 
-Restart a message flow
+# Restart a message flow
 	mqsistopmsgflow <broker> -e <execution_group> -m <message_flow>
 	mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>
 
-List all message flows with execution groups
+# List all message flows with execution groups
 	mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }
 
-Set DB user and Password
+# Set DB user and Password
 	mqsisetdbparms <broker> -n <dsn> -u <user> -p '<password>' 
 	mqsisetdbparms <broker> -n dsn::DAN -u <user> -p '<password>' 
 	mqsisetdbparms <broker> -n dsn::<dsn> -u <user> -p '<password>' 
 	
-Set FTP credentials 
+# Set FTP credentials 
 	mqsisetdbparms <broker> -n sftp::<sft_id> -u <user> -p '<password>' 
 
-Enable SSL support on the broker instance 
+# Enable SSL support on the broker instance 
 	mqsichangeproperties <broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
 	
-Message broker logs 
-	JVM standard out and err logs
-	/var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
-	/var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
+# Message broker logs 
+	# JVM standard out and err logs
+		/var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
+		/var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
 
-Check execution group start times 
+# Check execution group start times 
 	grep "Execution group started" /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
 	
-Procedure to take a user or service trace of message flow at an integration server or execution group level 
+# Procedure to take a user or service trace of message flow at an integration server or execution group level 
 	http://www-01.ibm.com/support/docview.wss?uid=swg21177321 
 
-Create security profile 
+# Create security profile 
 	mqsicreateconfigurableservice <broker> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://url:389/rdn?cn"\,"NONE","NONE",TRUE 
 	
-Backup configuration before change controls 
-	Take backup of /root/mqsi/jplugin directory 
-	Take backup of /var/mqsi/odbc/odbc.ini 
-	Take backup of /root/mqsi/jre16/lib/security/cacerts 
-	Take backup of broker configuration (mqsibackupbroker) 
+# Backup configuration before change controls 
+	# Take backup of /root/mqsi/jplugin directory 
+	# Take backup of /var/mqsi/odbc/odbc.ini 
+	# Take backup of /root/mqsi/jre16/lib/security/cacerts 
+	# Take backup of broker configuration (mqsibackupbroker) 
 	
-Configure Message Broker to serve HTTPS requests 
+# Configure Message Broker to serve HTTPS requests 
 	mqsichangeproperties <broker> -o BrokerRegistry -n brokerKeystoreFile -v <Key Store File>
 	mqsichangeproperties <Broker> -o BrokerRegistry -n brokerTruststoreFile -v <Trust Store File>
 	mqsisetdbparms <Broker> -n brokerTruststore::password -u temp -p changeit
@@ -79,11 +79,11 @@ Configure Message Broker to serve HTTPS requests
 
 	mqsireportproperties <Broker> -e <EG> -o HTTPSConnector -r
 
-Switch between Broker Wide Listener and Embedded Listener
+# Switch between Broker Wide Listener and Embedded Listener
 	mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n httpNodesUseEmbeddedListener -v false
 	mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n soapNodesUseEmbeddedListener -v false
 
-Report Properties
+# Report Properties
 	Broker Registry Parameters 
 		mqsireportproperties "<Broker> -o BrokerRegistry -r"
 	All Reportable Entities 
@@ -99,10 +99,10 @@ Report Properties
 	Security Profile Properties 
 		mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r
 
-OS Version
+# OS Version
 	oslevel -s
 
-CPU/Memory Related Commands
+# CPU/Memory Related Commands
 	lparstat 
 	lparstat -i 
 	prtconf 
@@ -113,20 +113,20 @@ CPU/Memory Related Commands
 	iostat -Dl 
 	vmstat -s
 
-List details of all volume groups with lsvg on AIX
+# List details of all volume groups with lsvg on AIX
 	lsvg 
 	lsvg -li 
-Operating System Logs Viewing the general system error log (AIX) 
+# Operating System Logs Viewing the general system error log (AIX) 
 	errpt -a | more 
-Find out Process Listening on a port
+# Find out Process Listening on a port
 	netstat -Aan | grep <port> 
 	First part of the result is socket id. Run following command with socket id 
 		rmsock <socket id> tcpcb 
 
-Maximum number of processes per user AIX
+# Maximum number of processes per user AIX
 	lsattr -El sys0
 
-Certificate Related Commands
+# Certificate Related Commands
 	List Certificates in Key Store 
 		keytool -list -v -keystore "<keystore file>" 
 	CA Certificate File Location 
@@ -137,19 +137,19 @@ Certificate Related Commands
 		keytool -certreq -alias <alias_name> -keystore "/root/mqsi/jre16/lib/security/cacerts" -file name.csr 
 	Send name.csr to CA for generating the certs. 
 	
-Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
+# Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
 	/root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystore myp12file.p12 -deststoretype PKCS12 
 	openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem 
-Import a Certificate in Key Store 
+# Import a Certificate in Key Store 
 	/root/mqsi/jre16/bin/keytool -import -alias <alias> -file "<cert file>" -keystore "/root/jre16/lib/security/cacerts" 
-Delete a Certificate from Key Store 
+# Delete a Certificate from Key Store 
 	/root/mqsi/jre16/bin/keytool -delete -alias <alias> -keystore "/root/mqsi/jre16/lib/security/cacerts"
 
-Catalog DB2 Servers on Desktop
+# Catalog DB2 Servers on Desktop
 	CATALOG TCPIP NODE NODENAME REMOTE HOST_DNS SERVER PORT 
 	CATALOG DATABASE DBNAME AS DBALIAS AT NODE NODENAME
 
-Commands Used to request certificates for New test Environment Load balancer
+# Commands Used to request certificates for New test Environment Load balancer
 	/root/mqsi/jre16/bin/keytool -genkey -alias cert_alias -keyalg RSA -keystore keystore.jks -keysize 2048 
 	/root/mqsi/jre16/bin/keytool -certreq -alias cert_alias -keystore keystore.jks -file file.csr 
 	/root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias src_alias -destkeystore dst_keystore.p12 -deststoretype PKCS12 
