@@ -13,7 +13,7 @@
 	mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>
 
 # List all message flows with execution groups
-	mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }
+	mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }'
 
 # Set DB user and Password
 	mqsisetdbparms <broker> -n <dsn> -u <user> -p '<password>' 
@@ -38,7 +38,7 @@
 	http://www-01.ibm.com/support/docview.wss?uid=swg21177321 
 
 # Create security profile 
-	mqsicreateconfigurableservice <broker> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://url:389/rdn?cn"\,"NONE","NONE",TRUE 
+	mqsicreateconfigurableservice <broker> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://url:389/rdn?cn\","NONE","NONE",TRUE 
 	
 # Backup configuration before change controls 
 	# Take backup of /root/mqsi/jplugin directory 
@@ -58,7 +58,6 @@
 	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n clientAuth -v true
 	mqsistop <Broker> 
 	mqsistart <Broker> 
-
 
 	mqsireportproperties <Broker> -b httplistener -o AllReportableEntityNames -a 
 	mqsireportproperties <Broker> -b httplistener -o HTTPListener -a 
@@ -97,7 +96,7 @@
 	JVM Properties 
 		mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
 	Security Profile Properties 
-		mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r
+		mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r"
 
 # OS Version
 	oslevel -s
