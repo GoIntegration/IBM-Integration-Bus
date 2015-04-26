@@ -1,101 +1,158 @@
-Message Broker
-
 List deployed objects on message broker
-mqsilist -r
+	mqsilist -r
 
 Restart message broker
-mqsistop <broker>
-mqsistart <broker>
+	mqsistop <broker>
+	mqsistart <broker>
 
 Deploy a BAR file
-mqsideploy <broker> -e <execution_group> -a <bar_file> 
+	mqsideploy <broker> -e <execution_group> -a <bar_file> 
 
 Restart a message flow
-mqsistopmsgflow <broker> -e <execution_group> -m <message_flow>
-mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>
+	mqsistopmsgflow <broker> -e <execution_group> -m <message_flow>
+	mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>
 
 List all message flows with execution groups
-mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }
+	mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }
 
-Set DB User and Password mqsisetdbparms <Broker> -n <DSN> -u <User> -p '<Password>' mqsisetdbparms <Broker> -n dsn::DAN -u <User> -p '<Password>' mqsisetdbparms <Broker> -n dsn::<DSN> -u <User> -p '<Password>' Set FTP Credentials mqsisetdbparms <Broker> -n sftp::<SFTP_ID> -u <User> -p '<Password>' 
+Set DB user and Password
+	mqsisetdbparms <broker> -n <dsn> -u <user> -p '<password>' 
+	mqsisetdbparms <broker> -n dsn::DAN -u <user> -p '<password>' 
+	mqsisetdbparms <broker> -n dsn::<dsn> -u <user> -p '<password>' 
+	
+Set FTP credentials 
+	mqsisetdbparms <broker> -n sftp::<sft_id> -u <user> -p '<password>' 
+
 Enable SSL support on the broker instance 
-mqsichangeproperties <Broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true Logs JVM Standard Out logs: /var/mqsi/mqsi/components/CMMPBRK1/<EG UID>/stdout JVM Standard Err logs: /var/mqsi/mqsi/components/CMMPBRK1/<EG UID>/stderr 
+	mqsichangeproperties <broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
+	
+Message broker logs 
+	JVM standard out and err logs
+	/var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
+	/var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
 
-Check Execution Group Start Times grep "Execution group started" /var/mqsi/mqsi/components/CMMPBRK1/<EG UID>/stdout Procedure to take a user or service trace of message flow at an integration server or execution group level http://www-01.ibm.com/support/docview.wss?uid=swg21177321 Create Security Profile mqsicreateconfigurableservice <Broker_Name> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://ldaptest.appl.chrysler.com:389/ou=applications,o=dcx.com?cn"\,"NONE","NONE",TRUE Backup Configuration Before Change Controls Take backup of PAI config directory(/global/site/vendor/mqsi/dcx/config) Take backup of /global/site/vendor/mqsi/jplugin directory Take backup of /var/mqsi/odbc/odbc.ini Take backup of /global/site/vendor/mqsi/jre16/lib/security/cacerts Take Backup of Broker configuration (mqsibackupbroker) Create New Execution Group Refer the following PAI Info Center document link for steps: http://pai.intra.chrysler.com/infocenter/infocenter/PAI_40/BIB40/platforms/BIB/platform_documentation/installation/PAI_BIB_4.0_Installation_Guide_AIX.pdf Create new execution group QL_00 using PAI BIB scripts. Please refer documentation for creating new execution group. (Scripts DSL Location: /clocal/dsl/Repository/GA/BIB4.0/aix/scripts/BIB_4.0_AIX.tar) Note: Please keep INSTALLATION_DIRECTORY property as "/global/site/vendor" in install.properties files instead of "/global/site/vendor/mqsi".3. Run the Database patch for QL_00 execution group: Refer to section 7 "PAI BIB 4.0.1 Patch: Considering new database changes" for steps. (Scripts DSL Location: /clocal/dsl/dropbox/PAI/BIB_4.0/BIB_4.0_patch_4.0.1.tar) Configure Message Broker to serve HTTPS requests mqsichangeproperties <Broker> -o BrokerRegistry -n brokerKeystoreFile -v <Key Store File>
+Check execution group start times 
+	grep "Execution group started" /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
+	
+Procedure to take a user or service trace of message flow at an integration server or execution group level 
+	http://www-01.ibm.com/support/docview.wss?uid=swg21177321 
 
-mqsichangeproperties <Broker> -o BrokerRegistry -n brokerTruststoreFile -v <Trust Store File>
-mqsisetdbparms <Broker> -n brokerTruststore::password -u temp -p changeit
+Create security profile 
+	mqsicreateconfigurableservice <broker> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://url:389/rdn?cn"\,"NONE","NONE",TRUE 
+	
+Backup configuration before change controls 
+	Take backup of /root/mqsi/jplugin directory 
+	Take backup of /var/mqsi/odbc/odbc.ini 
+	Take backup of /root/mqsi/jre16/lib/security/cacerts 
+	Take backup of broker configuration (mqsibackupbroker) 
+	
+Configure Message Broker to serve HTTPS requests 
+	mqsichangeproperties <broker> -o BrokerRegistry -n brokerKeystoreFile -v <Key Store File>
+	mqsichangeproperties <Broker> -o BrokerRegistry -n brokerTruststoreFile -v <Trust Store File>
+	mqsisetdbparms <Broker> -n brokerTruststore::password -u temp -p changeit
+	mqsichangeproperties <Broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
+	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystoreFile -v <Key Store File>
+	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystorePass -v <password>
+	mqsichangeproperties <Broker> -b httplistener -o HTTPConnector -n port -v <Port> 
+	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n port -v <Port>
+	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n clientAuth -v true
+	mqsistop <Broker> 
+	mqsistart <Broker> 
 
-mqsichangeproperties <Broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
-mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystoreFile -v <Key Store File>
-mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystorePass -v <password>
-mqsichangeproperties <Broker> -b httplistener -o HTTPConnector -n port -v <Port> 
-mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n port -v <Port>
-mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n clientAuth -v true
-mqsistop <Broker> mqsistart <Broker> 
 
+	mqsireportproperties <Broker> -b httplistener -o AllReportableEntityNames -a 
+	mqsireportproperties <Broker> -b httplistener -o HTTPListener -a 
+	mqsireportproperties <Broker> -b httplistener -o HTTPSConnector  -a 
 
-mqsireportproperties <Broker> -b httplistener -o AllReportableEntityNames -a 
-mqsireportproperties <Broker> -b httplistener -o HTTPListener -a 
-mqsireportproperties <Broker> -b httplistener -o HTTPSConnector  -a 
+	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n sslProtocol -v TLS
+	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n explicitlySetPortNumber -v <Port>
+	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n clientAuth -v true 
+	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreFile -v <Key Store File>
+	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreType -v JKS
+	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystorePass -v <password>
+	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreFile -v <Key Store File> 
+	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreType -v JKS 
+	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystorePass -v brokerKeystore::password 
+	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreFile -v <Trust Store File>
+	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreType -v JKS
+	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststorePass -v brokerTruststore::password
 
-mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n sslProtocol -v TLS
-mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n explicitlySetPortNumber -v <Port>
-mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n clientAuth -v true 
-mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreFile -v <Key Store File>
-mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreType -v JKS
-mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystorePass -v <password>
-mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreFile -v <Key Store File> mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreType -v JKS mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystorePass -v brokerKeystore::password mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreFile -v <Trust Store File>
-mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreType -v JKS
-mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststorePass -v brokerTruststore::password
-
-mqsireportproperties <Broker> -e <EG> -o HTTPSConnector -r
+	mqsireportproperties <Broker> -e <EG> -o HTTPSConnector -r
 
 Switch between Broker Wide Listener and Embedded Listener
-mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n httpNodesUseEmbeddedListener -v false
-mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n soapNodesUseEmbeddedListener -v false
+	mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n httpNodesUseEmbeddedListener -v false
+	mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n soapNodesUseEmbeddedListener -v false
 
 Report Properties
-Broker Registry Parameters sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -o BrokerRegistry -r"
-All Reportable Entities sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -e <Execution Group> -o AllReportableEntityNames -r" 
-HTTP Listener Properties At Broker Level sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -b httplistener -o AllReportableEntityNames -r"
-HTTP Connector Properties At Execution Group Level sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPConnector -r"
-HTTPS Connector Properties At Execution Group Level sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPSConnector -r"
-JVM Properties sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
-Security Profile Properties sudo -u mqbrkrs /clocal/cmmmgt/user/pscmmadm/mqsi/bin/mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r
-
-
-
+	Broker Registry Parameters 
+		mqsireportproperties "<Broker> -o BrokerRegistry -r"
+	All Reportable Entities 
+		mqsireportproperties "<Broker> -e <Execution Group> -o AllReportableEntityNames -r" 
+	HTTP Listener Properties At Broker Level 
+		mqsireportproperties "<Broker> -b httplistener -o AllReportableEntityNames -r"
+	HTTP Connector Properties At Execution Group Level 
+		mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPConnector -r"
+	HTTPS Connector Properties At Execution Group Level 
+		mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPSConnector -r"
+	JVM Properties 
+		mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
+	Security Profile Properties 
+		mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r
 
 OS Version
-oslevel -s
-
+	oslevel -s
 
 CPU/Memory Related Commands
-lparstat lparstat -i prtconf lsconf nmon https://www.ibm.com/developerworks/community/blogs/aixpert/entry/aix_memory_usage_or_who_is_using_the_memory_and_how20?lang=en vmstat -Iwt 2 30 iostat -Dl vmstat -s
-
+	lparstat 
+	lparstat -i 
+	prtconf 
+	lsconf 
+	nmon 
+	https://www.ibm.com/developerworks/community/blogs/aixpert/entry/aix_memory_usage_or_who_is_using_the_memory_and_how20?lang=en 
+	vmstat -Iwt 2 30 
+	iostat -Dl 
+	vmstat -s
 
 List details of all volume groups with lsvg on AIX
- lsvg | lsvg -li Operating System Logs Viewing the general system error log (AIX) errpt -a | more Find out Process Listening on a port > netstat -Aan | grep <port> First part of the result is socket id. Run following command with socket id > rmsock <socket id> tcpcb 
+	lsvg 
+	lsvg -li 
+Operating System Logs Viewing the general system error log (AIX) 
+	errpt -a | more 
+Find out Process Listening on a port
+	netstat -Aan | grep <port> 
+	First part of the result is socket id. Run following command with socket id 
+		rmsock <socket id> tcpcb 
 
 Maximum number of processes per user AIX
-lsattr -El sys0
-
+	lsattr -El sys0
 
 Certificate Related Commands
-List Certificates in Key Store 
-/global/site/vendor/mqsi/jre16/bin/keytool -list -v -keystore "<keystore file>" CA Certificate File Location /global/site/vendor/mqsi/jre16/lib/security/cacerts Generate Private Key and Key Store /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/global/site/vendor/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048 Enter information prompted. What is your first and last name? [Unknown]: shi006labt04.shdc.chrysler.com What is the name of your organizational unit? [Unknown]: ITM What is the name of your organization? [Unknown]: Chrysler Group LLC What is the name of your City or Locality? [Unknown]: Auburn Hills What is the name of your State or Province? [Unknown]: MICHIGAN What is the two-letter country code for this unit? [Unknown]: US Is CN=shi006labt04.shdc.chrysler.com, OU=ITM, O=Chrysler Group LLC, L=Auburn Hills, ST=MICHIGAN, C=US correct? (type "yes" or "no") [no]: yes Generate CSR /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias <alias_name> -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts" -file cmmdev.csr Send /global/site/vendor/mqsi/jre16/lib/security/cmmdev.csr to cdroot_pki@chrysler.com for generating the certs. Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
-/global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystoremyp12file.p12 -deststoretype PKCS12 openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem Import a Certificate in Key Store /global/site/vendor/mqsi/jre16/bin/keytool -import -alias cmm_cvp_ngtp_proxy -file "/clocal/cmmmgt/user/pscmmadm/certs/VSB_NRT.crt" -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts" Delete a Certificate from Key Store /global/site/vendor/mqsi/jre16/bin/keytool -delete -alias cmm_cvp_ngtp_proxy -keystore "/global/site/vendor/mqsi/jre16/lib/security/cacerts"
-
+	List Certificates in Key Store 
+		keytool -list -v -keystore "<keystore file>" 
+	CA Certificate File Location 
+		/root/mqsi/jre16/lib/security/cacerts 
+	Generate Private Key and Key Store 
+		keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/root/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048 
+	Generate CSR 
+		keytool -certreq -alias <alias_name> -keystore "/root/mqsi/jre16/lib/security/cacerts" -file name.csr 
+	Send name.csr to CA for generating the certs. 
+	
+Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
+	/root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystore myp12file.p12 -deststoretype PKCS12 
+	openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem 
+Import a Certificate in Key Store 
+	/root/mqsi/jre16/bin/keytool -import -alias <alias> -file "<cert file>" -keystore "/root/jre16/lib/security/cacerts" 
+Delete a Certificate from Key Store 
+	/root/mqsi/jre16/bin/keytool -delete -alias <alias> -keystore "/root/mqsi/jre16/lib/security/cacerts"
 
 Catalog DB2 Servers on Desktop
-CATALOG TCPIP NODE CVPPROD REMOTE shi006cvpp01.shdc.chrysler.com SERVER 25800 CATALOG DATABASE CVPPROD AS CVPPROD AT NODE CVPPROD; CATALOG TCPIP NODE CVPTEST REMOTE cli007cpsd01.cldc.chrysler.com SERVER 25600 CATALOG DATABASE CVPTEST AS CVPTEST AT NODE CVPTEST CATALOG TCPIP NODE CVPDEV REMOTE cli007cpsd01.cldc.chrysler.com SERVER 25590 CATALOG DATABASE CVPDEV AS CVPDEV AT NODE CVPDEV; CATALOG TCPIP NODE SHRPROD REMOTE srvr2280.dbms.chrysler.com SERVER 22800 CATALOG DATABASE ASHRPROD AS ASHRPROD AT NODE SHRPROD CATALOG TCPIP NODE CMMDEV REMOTE odi006cmmt01.oddc.chrysler.com SERVER 26480 CATALOG DATABASE CMMDEV AS CMMDEV AT NODE CMMDEV 
-
-
-Other Commands
-
+	CATALOG TCPIP NODE NODENAME REMOTE HOST_DNS SERVER PORT 
+	CATALOG DATABASE DBNAME AS DBALIAS AT NODE NODENAME
 
 Commands Used to request certificates for New test Environment Load balancer
-/global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias ws-00.cmmtest.intra.chrysler.com -keyalg RSA -keystore ws-00.cmmtest.intra.chrysler.com.jks -keysize 2048 /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias ws-01.cmmtest.intra.chrysler.com -keyalg RSA -keystore ws-01.cmmtest.intra.chrysler.com.jks -keysize 2048 /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias ws-02.cmmtest.intra.chrysler.com -keyalg RSA -keystore ws-02.cmmtest.intra.chrysler.com.jks -keysize 2048 /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias ws-03.cmmtest.intra.chrysler.com -keyalg RSA -keystore ws-03.cmmtest.intra.chrysler.com.jks -keysize 2048 /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias ws-04.cmmtest.intra.chrysler.com -keyalg RSA -keystore ws-04.cmmtest.intra.chrysler.com.jks -keysize 2048 /global/site/vendor/mqsi/jre16/bin/keytool -genkey -alias ws-05.cmmtest.intra.chrysler.com -keyalg RSA -keystore ws-05.cmmtest.intra.chrysler.com.jks -keysize 2048 /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias ws-00.cmmtest.intra.chrysler.com -keystore ws-00.cmmtest.intra.chrysler.com.jks -file ws-00.cmmtest.intra.chrysler.com.csr /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias ws-01.cmmtest.intra.chrysler.com -keystore ws-01.cmmtest.intra.chrysler.com.jks -file ws-01.cmmtest.intra.chrysler.com.csr /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias ws-02.cmmtest.intra.chrysler.com -keystore ws-02.cmmtest.intra.chrysler.com.jks -file ws-02.cmmtest.intra.chrysler.com.csr /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias ws-03.cmmtest.intra.chrysler.com -keystore ws-03.cmmtest.intra.chrysler.com.jks -file ws-03.cmmtest.intra.chrysler.com.csr /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias ws-04.cmmtest.intra.chrysler.com -keystore ws-04.cmmtest.intra.chrysler.com.jks -file ws-04.cmmtest.intra.chrysler.com.csr /global/site/vendor/mqsi/jre16/bin/keytool -certreq -alias ws-05.cmmtest.intra.chrysler.com -keystore ws-05.cmmtest.intra.chrysler.com.jks -file ws-05.cmmtest.intra.chrysler.com.csr /global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore ws-00.cmmtest.intra.chrysler.com.jks -srcalias ws-00.cmmtest.intra.chrysler.com -destkeystore ws-00.cmmtest.intra.chrysler.com.p12 -deststoretype PKCS12 /global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore ws-01.cmmtest.intra.chrysler.com.jks -srcalias ws-01.cmmtest.intra.chrysler.com -destkeystore ws-01.cmmtest.intra.chrysler.com.p12 -deststoretype PKCS12 /global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore ws-02.cmmtest.intra.chrysler.com.jks -srcalias ws-02.cmmtest.intra.chrysler.com -destkeystore ws-02.cmmtest.intra.chrysler.com.p12 -deststoretype PKCS12 /global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore ws-03.cmmtest.intra.chrysler.com.jks -srcalias ws-03.cmmtest.intra.chrysler.com -destkeystore ws-03.cmmtest.intra.chrysler.com.p12 -deststoretype PKCS12 /global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore ws-04.cmmtest.intra.chrysler.com.jks -srcalias ws-04.cmmtest.intra.chrysler.com -destkeystore ws-04.cmmtest.intra.chrysler.com.p12 -deststoretype PKCS12 /global/site/vendor/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore ws-05.cmmtest.intra.chrysler.com.jks -srcalias ws-05.cmmtest.intra.chrysler.com -destkeystore ws-05.cmmtest.intra.chrysler.com.p12 -deststoretype PKCS12 openssl pkcs12 -in ws-00.cmmtest.intra.chrysler.com.p12 -out ws-00.cmmtest.intra.chrysler.com.pem openssl pkcs12 -in ws-01.cmmtest.intra.chrysler.com.p12 -out ws-01.cmmtest.intra.chrysler.com.pem openssl pkcs12 -in ws-02.cmmtest.intra.chrysler.com.p12 -out ws-02.cmmtest.intra.chrysler.com.pem openssl pkcs12 -in ws-03.cmmtest.intra.chrysler.com.p12 -out ws-03.cmmtest.intra.chrysler.com.pem openssl pkcs12 -in ws-04.cmmtest.intra.chrysler.com.p12 -out ws-04.cmmtest.intra.chrysler.com.pem openssl pkcs12 -in ws-05.cmmtest.intra.chrysler.com.p12 -out ws-05.cmmtest.intra.chrysler.com.pem
+	/root/mqsi/jre16/bin/keytool -genkey -alias cert_alias -keyalg RSA -keystore keystore.jks -keysize 2048 
+	/root/mqsi/jre16/bin/keytool -certreq -alias cert_alias -keystore keystore.jks -file file.csr 
+	/root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias src_alias -destkeystore dst_keystore.p12 -deststoretype PKCS12 
+	openssl pkcs12 -in keystore.p12 -out private_key.pem
 
 
