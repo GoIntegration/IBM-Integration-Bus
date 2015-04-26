@@ -13,7 +13,7 @@
 	mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>
 
 # List all message flows with execution groups
-	mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }
+	mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }'
 
 # Set DB user and Password
 	mqsisetdbparms <broker> -n <dsn> -u <user> -p '<password>' 
