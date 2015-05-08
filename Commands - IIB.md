@@ -1,8 +1,9 @@
-# List deployed objects on message broker
-	mqsilist -r
+# Some useful handy IIB commands
 
-# Restart message broker
-	mqsistop <broker>
+* List deployed objects on message broker
+* mqsilist -r
+* Restart message broker
+* mqsistop <broker>
 	mqsistart <broker>
 
 # Deploy a BAR file
