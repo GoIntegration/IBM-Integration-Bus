@@ -1,108 +1,145 @@
 # Some handy IIB commands
-###### List deployed objects on message broker 
-`mqsilist -r`
+* List deployed objects on message broker
+  ```
+  mqsilist -r
+  ```
 
-###### Restart message broker
-```
-mqsistop <broker>
-mqsistart <broker>
-```
+* Restart message broker
+  ``` 
+  mqsistop <broker>
+  mqsistart <broker>
+  ```
 
-###### Deploy a BAR file
-```mqsideploy <broker> -e <execution_group> -a <bar_file>```
+* Deploy a BAR file
+  ```
+  mqsideploy <broker> -e <execution_group> -a <bar_file>
+  ```
 
-###### Restart a message flow
-```mqsistopmsgflow <broker> -e <execution_group> -m <message_flow>
-mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>```
+* Restart a message flow
+  ```
+  mqsistopmsgflow <broker> -e <execution_group> -m <message_flow>
+  mqsistartmsgflow <broker> -e <execution_group> -m <message_flow>
+  ```
 
-###### List all message flows with execution group
-```mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }'```
+* List all message flows with execution group
+  ```
+  mqsilist -r | grep "Message flow" | awk -F\' ' { print $4" "$2 }'
+  ```
 
-# Set DB user and Password
-	mqsisetdbparms <broker> -n <dsn> -u <user> -p '<password>' 
-	mqsisetdbparms <broker> -n dsn::DAN -u <user> -p '<password>' 
-	mqsisetdbparms <broker> -n dsn::<dsn> -u <user> -p '<password>' 
+* Set DB user and Password
+  ```
+  mqsisetdbparms <broker> -n <dsn> -u <user> -p '<password>' 
+  mqsisetdbparms <broker> -n dsn::DAN -u <user> -p '<password>' 
+  mqsisetdbparms <broker> -n dsn::<dsn> -u <user> -p '<password>' 
+  ```
+  
+* Set FTP credentials 
+  ```
+  mqsisetdbparms <broker> -n sftp::<sft_id> -u <user> -p '<password>' 
+  ```
+
+* Enable SSL support on the broker instance 
+  ```
+  mqsichangeproperties <broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
+  ```
+  
+* Message broker logs 
+  * JVM standard out and err logs
+    ```
+    /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
+    /var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
+    ```
+    
+* Check execution group start times 
+  ```	
+  grep "Execution group started" /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
+  ```	
+* Procedure to take a user or service trace of message flow at an integration server or execution group level
+  http://www-01.ibm.com/support/docview.wss?uid=swg21177321 
+
+* Create security profile 
+  ```
+  mqsicreateconfigurableservice <broker> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://url:389/rdn?cn\","NONE","NONE",TRUE
+  ``` 	
+* Backup configuration before change controls 
+  * Take backup of /root/mqsi/jplugin directory 
+  * Take backup of /var/mqsi/odbc/odbc.ini 
+  * Take backup of /root/mqsi/jre16/lib/security/cacerts 
+  * Take backup of broker configuration (mqsibackupbroker) 
 	
-# Set FTP credentials 
-	mqsisetdbparms <broker> -n sftp::<sft_id> -u <user> -p '<password>' 
+* Configure Message Broker to serve HTTPS requests 
+  ```
+  mqsichangeproperties <broker> -o BrokerRegistry -n brokerKeystoreFile -v <Key Store File>
+  mqsichangeproperties <Broker> -o BrokerRegistry -n brokerTruststoreFile -v <Trust Store File>
+  mqsisetdbparms <Broker> -n brokerTruststore::password -u temp -p changeit
+  mqsichangeproperties <Broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
+  mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystoreFile -v <Key Store File>
+  mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystorePass -v <password>
+  mqsichangeproperties <Broker> -b httplistener -o HTTPConnector -n port -v <Port> 
+  mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n port -v <Port>
+  mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n clientAuth -v true
+  mqsistop <Broker> 
+  mqsistart <Broker> 
 
-# Enable SSL support on the broker instance 
-	mqsichangeproperties <broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
-	
-# Message broker logs 
-	# JVM standard out and err logs
-		/var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
-		/var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
+  mqsireportproperties <Broker> -b httplistener -o AllReportableEntityNames -a 
+  mqsireportproperties <Broker> -b httplistener -o HTTPListener -a 
+  mqsireportproperties <Broker> -b httplistener -o HTTPSConnector  -a 
 
-# Check execution group start times 
-	grep "Execution group started" /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
-	
-# Procedure to take a user or service trace of message flow at an integration server or execution group level 
-	http://www-01.ibm.com/support/docview.wss?uid=swg21177321 
+  mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n sslProtocol -v TLS
+  mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n explicitlySetPortNumber -v <Port>
+  mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n clientAuth -v true 
+  mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreFile -v <Key Store File>
+  mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreType -v JKS
+  mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystorePass -v <password>
+  mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreFile -v <Key Store File> 
+  mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreType -v JKS 
+  mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystorePass -v brokerKeystore::password 
+  mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreFile -v <Trust Store File>
+  mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreType -v JKS
+  mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststorePass -v brokerTruststore::password
 
-# Create security profile 
-	mqsicreateconfigurableservice <broker> -c SecurityProfiles -o <SecurityProfileObjectName> -n authentication,authenticationConfig,mapping,authorization,propagation -v "LDAP",\"ldap://url:389/rdn?cn\","NONE","NONE",TRUE 
-	
-# Backup configuration before change controls 
-	# Take backup of /root/mqsi/jplugin directory 
-	# Take backup of /var/mqsi/odbc/odbc.ini 
-	# Take backup of /root/mqsi/jre16/lib/security/cacerts 
-	# Take backup of broker configuration (mqsibackupbroker) 
-	
-# Configure Message Broker to serve HTTPS requests 
-	mqsichangeproperties <broker> -o BrokerRegistry -n brokerKeystoreFile -v <Key Store File>
-	mqsichangeproperties <Broker> -o BrokerRegistry -n brokerTruststoreFile -v <Trust Store File>
-	mqsisetdbparms <Broker> -n brokerTruststore::password -u temp -p changeit
-	mqsichangeproperties <Broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
-	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystoreFile -v <Key Store File>
-	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n keystorePass -v <password>
-	mqsichangeproperties <Broker> -b httplistener -o HTTPConnector -n port -v <Port> 
-	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n port -v <Port>
-	mqsichangeproperties <Broker> -b httplistener -o HTTPSConnector -n clientAuth -v true
-	mqsistop <Broker> 
-	mqsistart <Broker> 
-
-	mqsireportproperties <Broker> -b httplistener -o AllReportableEntityNames -a 
-	mqsireportproperties <Broker> -b httplistener -o HTTPListener -a 
-	mqsireportproperties <Broker> -b httplistener -o HTTPSConnector  -a 
-
-	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n sslProtocol -v TLS
-	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n explicitlySetPortNumber -v <Port>
-	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n clientAuth -v true 
-	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreFile -v <Key Store File>
-	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystoreType -v JKS
-	mqsichangeproperties <Broker> -e <EG> -o HTTPSConnector -n keystorePass -v <password>
-	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreFile -v <Key Store File> 
-	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystoreType -v JKS 
-	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n keystorePass -v brokerKeystore::password 
-	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreFile -v <Trust Store File>
-	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststoreType -v JKS
-	mqsichangeproperties <Broker> -e <EG> -o ComIbmJVMManager -n truststorePass -v brokerTruststore::password
-
-	mqsireportproperties <Broker> -e <EG> -o HTTPSConnector -r
-
-# Switch between Broker Wide Listener and Embedded Listener
-	mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n httpNodesUseEmbeddedListener -v false
-	mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n soapNodesUseEmbeddedListener -v false
-
-# Report Properties
-	Broker Registry Parameters 
-		mqsireportproperties "<Broker> -o BrokerRegistry -r"
-	All Reportable Entities 
-		mqsireportproperties "<Broker> -e <Execution Group> -o AllReportableEntityNames -r" 
-	HTTP Listener Properties At Broker Level 
-		mqsireportproperties "<Broker> -b httplistener -o AllReportableEntityNames -r"
-	HTTP Connector Properties At Execution Group Level 
-		mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPConnector -r"
-	HTTPS Connector Properties At Execution Group Level 
-		mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPSConnector -r"
-	JVM Properties 
-		mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
-	Security Profile Properties 
-		mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r"
-
-# OS Version
-	oslevel -s
+  mqsireportproperties <Broker> -e <EG> -o HTTPSConnector -r
+  ```
+  
+* Switch between Broker Wide Listener and Embedded Listener
+  ```
+  mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n httpNodesUseEmbeddedListener -v false
+  mqsichangeproperties MB8BROKER -e exgroup1 -o ExecutionGroup -n soapNodesUseEmbeddedListener -v false
+  ```
+  
+* Report Properties
+  * Broker Registry Parameters 
+    ```
+    mqsireportproperties "<Broker> -o BrokerRegistry -r"
+    ```
+  * All Reportable Entities 
+    ```
+    mqsireportproperties "<Broker> -e <Execution Group> -o AllReportableEntityNames -r" 
+    ```
+  * HTTP Listener Properties At Broker Level 
+    ```
+    mqsireportproperties "<Broker> -b httplistener -o AllReportableEntityNames -r"
+    ```
+    * HTTP Connector Properties At Execution Group Level 
+    ```
+    mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPConnector -r"
+    ```
+    * HTTPS Connector Properties At Execution Group Level
+    ```
+    mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPSConnector -r"
+    ```
+    * JVM Properties 
+    ```
+    mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
+    ```
+    * Security Profile Properties 
+    ```
+    mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r"
+    ```
+ * OS Version
+   ```
+   oslevel -s
+   ```
 
 # CPU/Memory Related Commands
 	lparstat 
