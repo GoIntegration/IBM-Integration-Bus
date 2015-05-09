@@ -1,6 +1,6 @@
 # Some handy IIB commands
 * List deployed objects on message broker
-  * `mqsilist -r`
+  `mqsilist -r`
   2. Yet another point to consider.
 * Item 2
   * A corollary that does not need to be ordered.
