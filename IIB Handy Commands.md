@@ -1,4 +1,4 @@
-# Some handy IIB commands
+# IIB handy commands
 * List deployed objects on message broker
   ```
   mqsilist -r
@@ -43,17 +43,17 @@
   mqsichangeproperties <broker> -b httplistener -o HTTPListener -n enableSSLConnector -v true
   ```
   
-* Message broker logs 
-  * JVM standard out and err logs
-    ```
-    /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
-    /var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
-    ```
+* Message broker logs - JVM standard out and err logs
+  ```
+  /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
+  /var/mqsi/mqsi/components/<broker>/<eg_uid>/stderr 
+  ```
     
 * Check execution group start times 
   ```	
   grep "Execution group started" /var/mqsi/mqsi/components/<broker>/<eg_uid>/stdout 
   ```	
+
 * Procedure to take a user or service trace of message flow at an integration server or execution group level
   http://www-01.ibm.com/support/docview.wss?uid=swg21177321 
 
@@ -141,57 +141,87 @@
    oslevel -s
    ```
 
-# CPU/Memory Related Commands
-	lparstat 
-	lparstat -i 
-	prtconf 
-	lsconf 
-	nmon 
-	https://www.ibm.com/developerworks/community/blogs/aixpert/entry/aix_memory_usage_or_who_is_using_the_memory_and_how20?lang=en 
-	vmstat -Iwt 2 30 
-	iostat -Dl 
-	vmstat -s
-
-# List details of all volume groups with lsvg on AIX
-	lsvg 
-	lsvg -li 
-# Operating System Logs Viewing the general system error log (AIX) 
-	errpt -a | more 
-# Find out Process Listening on a port
-	netstat -Aan | grep <port> 
-	First part of the result is socket id. Run following command with socket id 
-		rmsock <socket id> tcpcb 
-
-# Maximum number of processes per user AIX
-	lsattr -El sys0
-
-# Certificate Related Commands
-	List Certificates in Key Store 
-		keytool -list -v -keystore "<keystore file>" 
-	CA Certificate File Location 
-		/root/mqsi/jre16/lib/security/cacerts 
-	Generate Private Key and Key Store 
-		keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/root/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048 
-	Generate CSR 
-		keytool -certreq -alias <alias_name> -keystore "/root/mqsi/jre16/lib/security/cacerts" -file name.csr 
-	Send name.csr to CA for generating the certs. 
+* CPU/Memory Related Commands
+  ```
+  lparstat 
+  lparstat -i 
+  prtconf 
+  lsconf 
+  nmon 
+  vmstat -Iwt 2 30 
+  iostat -Dl 
+  vmstat -s	
+  ```
+  https://www.ibm.com/developerworks/community/blogs/aixpert/entry/aix_memory_usage_or_who_is_using_the_memory_and_how20?lang=en 
 	
-# Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
-	/root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystore myp12file.p12 -deststoretype PKCS12 
-	openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem 
-# Import a Certificate in Key Store 
-	/root/mqsi/jre16/bin/keytool -import -alias <alias> -file "<cert file>" -keystore "/root/jre16/lib/security/cacerts" 
-# Delete a Certificate from Key Store 
-	/root/mqsi/jre16/bin/keytool -delete -alias <alias> -keystore "/root/mqsi/jre16/lib/security/cacerts"
+* List details of all volume groups with lsvg on AIX
+  ```
+  lsvg 
+  lsvg -li 
+  ```
+  
+* Operating System Logs Viewing the general system error log (AIX) 
+  ```
+  errpt -a | more 
+  ```
+  
+* Find out Process Listening on a port
+  ```
+  netstat -Aan | grep <port> 
+  First part of the result is socket id. Run following command with socket id 
+  rmsock <socket id> tcpcb 
+  ```
+  
+* Maximum number of processes per user AIX
+  ```
+  lsattr -El sys0
+  ```
 
-# Catalog DB2 Servers on Desktop
-	CATALOG TCPIP NODE NODENAME REMOTE HOST_DNS SERVER PORT 
-	CATALOG DATABASE DBNAME AS DBALIAS AT NODE NODENAME
+* Certificate Related Commands
+  * List Certificates in Key Store 
+  ```
+  keytool -list -v -keystore "<keystore file>" 
+  ```
+  * CA Certificate File Location 
+  ```
+  /root/mqsi/jre16/lib/security/cacerts 
+  ```
+  * Generate Private Key and Key Store 
+  ```
+  keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/root/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048
+  ```
+  * Generate CSR 
+  ```
+  keytool -certreq -alias <alias_name> -keystore "/root/mqsi/jre16/lib/security/cacerts" -file name.csr 
+  ```
+  * Send name.csr to CA for generating the certs. 
+	
+* Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
+  ```
+  /root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias client -destkeystore myp12file.p12 -deststoretype PKCS12 
+  openssl pkcs12 -in <File_Name>.p12 -out <File_Name>.pem 
+  ```
 
-# Commands Used to request certificates for New test Environment Load balancer
-	/root/mqsi/jre16/bin/keytool -genkey -alias cert_alias -keyalg RSA -keystore keystore.jks -keysize 2048 
-	/root/mqsi/jre16/bin/keytool -certreq -alias cert_alias -keystore keystore.jks -file file.csr 
-	/root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias src_alias -destkeystore dst_keystore.p12 -deststoretype PKCS12 
-	openssl pkcs12 -in keystore.p12 -out private_key.pem
+* Import a Certificate in Key Store 
+  ```
+  /root/mqsi/jre16/bin/keytool -import -alias <alias> -file "<cert file>" -keystore "/root/jre16/lib/security/cacerts" 
+  ```
 
+* Delete a Certificate from Key Store 
+  ```
+  /root/mqsi/jre16/bin/keytool -delete -alias <alias> -keystore "/root/mqsi/jre16/lib/security/cacerts"
+  ```
 
+* Catalog DB2 Servers on Desktop
+  ```
+  CATALOG TCPIP NODE NODENAME REMOTE HOST_DNS SERVER PORT 
+  CATALOG DATABASE DBNAME AS DBALIAS AT NODE NODENAME
+  ```
+
+* Commands Used to request certificates for New test Environment Load balancer
+  ```
+  /root/mqsi/jre16/bin/keytool -genkey -alias cert_alias -keyalg RSA -keystore keystore.jks -keysize 2048 
+  /root/mqsi/jre16/bin/keytool -certreq -alias cert_alias -keystore keystore.jks -file file.csr 
+  /root/mqsi/jre16/bin/keytool -v -importkeystore -srckeystore keystore.jks -srcalias src_alias -destkeystore dst_keystore.p12 -deststoretype PKCS12 
+  openssl pkcs12 -in keystore.p12 -out private_key.pem
+  ```
