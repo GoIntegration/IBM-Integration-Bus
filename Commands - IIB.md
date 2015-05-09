@@ -1,18 +1,6 @@
 # Some handy IIB commands
 * List deployed objects on message broker
-`mqsilist -r`
-
-  2. Yet another point to consider.
-* Item 2
-  * A corollary that does not need to be ordered.
-    * This is indented four spaces, because it's two spaces further than the item above.
-    * You might want to consider making a new list.
-* Item 3
-
-
-
-*List deployed objects on message broker
-**`mqsilist -r`
+  `mqsilist -r`
 
 * Restart message broker
 	`mqsistop <broker>`
