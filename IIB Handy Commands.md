@@ -109,37 +109,37 @@
   
 * Report Properties
   * Broker Registry Parameters 
-    ```
-    mqsireportproperties "<Broker> -o BrokerRegistry -r"
-    ```
+  ```
+  mqsireportproperties "<Broker> -o BrokerRegistry -r"
+  ```
   * All Reportable Entities 
-    ```
-    mqsireportproperties "<Broker> -e <Execution Group> -o AllReportableEntityNames -r" 
-    ```
+  ```
+  mqsireportproperties "<Broker> -e <Execution Group> -o AllReportableEntityNames -r" 
+  ```
   * HTTP Listener Properties At Broker Level 
-    ```
-    mqsireportproperties "<Broker> -b httplistener -o AllReportableEntityNames -r"
-    ```
-    * HTTP Connector Properties At Execution Group Level 
-    ```
-    mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPConnector -r"
-    ```
-    * HTTPS Connector Properties At Execution Group Level
-    ```
-    mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPSConnector -r"
-    ```
-    * JVM Properties 
-    ```
-    mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
-    ```
-    * Security Profile Properties 
-    ```
-    mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r"
-    ```
- * OS Version
-   ```
-   oslevel -s
-   ```
+  ```
+  mqsireportproperties "<Broker> -b httplistener -o AllReportableEntityNames -r"
+  ```
+  * HTTP Connector Properties At Execution Group Level 
+  ```
+  mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPConnector -r"
+  ```
+  * HTTPS Connector Properties At Execution Group Level
+  ```
+  mqsireportproperties "<Broker> -e <ExecutionGroup> -o HTTPSConnector -r"
+  ```
+  * JVM Properties 
+  ```
+  mqsireportproperties "<Broker> -o ComIbmJVMManager -a -e <ExecutionGroup>"
+  ```
+  * Security Profile Properties 
+  ```
+  mqsireportproperties "<Broker> -c SecurityProfiles -o <Security Profile Name> -r"
+  ```
+  * OS Version
+  ```
+  oslevel -s
+  ```
 
 * CPU/Memory Related Commands
   ```
@@ -182,18 +182,22 @@
   ```
   keytool -list -v -keystore "<keystore file>" 
   ```
+  
   * CA Certificate File Location 
   ```
   /root/mqsi/jre16/lib/security/cacerts 
   ```
+  
   * Generate Private Key and Key Store 
   ```
   keytool -genkey -alias <alias_name> -keyalg RSA -keystore "/root/mqsi/jre16/lib/security/<Key Store Name>" -keysize 2048
   ```
+  
   * Generate CSR 
   ```
   keytool -certreq -alias <alias_name> -keystore "/root/mqsi/jre16/lib/security/cacerts" -file name.csr 
   ```
+  
   * Send name.csr to CA for generating the certs. 
 	
 * Convert p12 format to pem format Key Store and Private key conversion from p12 to pem
