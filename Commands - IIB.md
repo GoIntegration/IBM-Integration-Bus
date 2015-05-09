@@ -1,12 +1,18 @@
-In the words of Abraham Lincoln:
-
-> Pardon my french
-
-
 # Some handy IIB commands
+1. Item 1
+  1. A corollary to the above item.
+  2. Yet another point to consider.
+2. Item 2
+  * A corollary that does not need to be ordered.
+    * This is indented four spaces, because it's two spaces further than the item above.
+    * You might want to consider making a new list.
+3. Item 3
 
-* List deployed objects on message broker
-`mqsilist -r`
+
+
+*List deployed objects on message broker
+**`mqsilist -r`
+
 * Restart message broker
 	`mqsistop <broker>`
 	`mqsistart <broker>`
