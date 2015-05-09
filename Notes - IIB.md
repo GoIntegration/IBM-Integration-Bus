@@ -1,10 +1,11 @@
-Elements of message broker the logical message tree are
-	Message
-	LocalEnvironment - Available within node for a message
-	Environment - Available within flow for a messages.
-	ExceptionList
-Default message domain for all input nodes is BLOB.
-Message tree when using HTTP Input node and default parser.
+# IIB Notes
+* Elements of message broker the logical message tree are
+  * Message
+  * LocalEnvironment
+  * Environment
+  * ExceptionList
+* Default message domain for all input nodes is BLOB.
+* Message tree when using HTTP Input node and default parser.
 
       
 InputRoot.*[] is array of all children of InputRoot.
