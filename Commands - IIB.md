@@ -1,7 +1,7 @@
 # Some handy IIB commands
 
 * List deployed objects on message broker
-                `mqsilist -r`
+* `mqsilist -r`
 * Restart message broker
 	`mqsistop <broker>`
 	`mqsistart <broker>`
