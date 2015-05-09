@@ -1,5 +1,5 @@
 # Some handy IIB commands
-* List deployed objects on message broker
+* List deployed objects on message broker 
 `mqsilist -r`
 
   2. Yet another point to consider.
