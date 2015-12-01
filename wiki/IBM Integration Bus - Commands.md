@@ -1,3 +1,10 @@
+* Start & Stop  
+  * Message Broker  
+  ``` 
+  mqsistop <broker>  
+  mqsistart <broker>  
+  ```
+
 
 * List deployed objects on message broker
   ```
@@ -5,14 +12,11 @@
   ```
 
 * Restart message broker
-  ``` 
-  mqsistop <broker>
-  mqsistart <broker>
-  ```
+
 
 * Deploy a BAR file
   ```
-  mqsideploy <broker> -e <execution_group> -a <bar_file>
+  mqsideploy <broker> -e <execution_group> -a <bar_file> -w <timeoutSecs>
   ```
 
 * Restart a message flow
