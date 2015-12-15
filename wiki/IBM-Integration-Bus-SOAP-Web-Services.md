@@ -1,0 +1,1 @@
+There are many methods to develop a SOAP web service in Integration Bus. This page explains one of such method.
